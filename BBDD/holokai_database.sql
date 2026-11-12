@@ -494,3 +494,46 @@ CREATE TABLE stock_movements (
 
     CONSTRAINT chk_stock_movements_quantity CHECK (quantity > 0)
 ) ENGINE=InnoDB;
+
+
+-- =================
+-- 14. CANJE CUPONES
+-- =================
+CREATE TABLE coupon_redemptions (
+    id BIGINT UNSIGNED AUTO_INCREMENT,
+    coupon_id BIGINT UNSIGNED,
+    user_id BIGINT UNSIGNED,
+    order_id BIGINT UNSIGNED,
+    discount_applied DECIMAL(10,2),
+    redeemed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_coupon_redemptions_id PRIMARY KEY (id),
+
+    CONSTRAINT nn_coupon_redemptions_coupon_id CHECK (coupon_id IS NOT NULL),
+    CONSTRAINT nn_coupon_redemptions_user_id CHECK (user_id IS NOT NULL),
+    CONSTRAINT nn_coupon_redemptions_order_id CHECK (order_id IS NOT NULL),
+    CONSTRAINT nn_coupon_redemptions_discount CHECK (discount_applied IS NOT NULL),
+
+    CONSTRAINT fk_coupon_redemptions_coupon_id
+        FOREIGN KEY (coupon_id)
+        REFERENCES coupons(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_coupon_redemptions_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_coupon_redemptions_order_id
+        FOREIGN KEY (order_id)
+        REFERENCES orders(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT uk_coupon_redemptions_coupon_user UNIQUE (coupon_id, user_id),
+    CONSTRAINT uk_coupon_redemptions_order UNIQUE (order_id),
+
+    CONSTRAINT chk_coupon_redemptions_discount CHECK (discount_applied >= 0)
+) ENGINE=InnoDB;
