@@ -139,3 +139,44 @@ CREATE TABLE coupons (
         start_date IS NULL OR end_date IS NULL OR start_date < end_date
     )
 ) ENGINE=InnoDB;
+
+
+-- ============
+-- 5. PRODUCTOS
+-- ============
+CREATE TABLE products (
+    id BIGINT UNSIGNED AUTO_INCREMENT,
+    category_id BIGINT UNSIGNED,
+    name VARCHAR(180),
+    sku VARCHAR(80),
+    description TEXT,
+    price DECIMAL(10,2),
+    stock INT UNSIGNED DEFAULT 0,
+    status ENUM('ACTIVE', 'INACTIVE', 'OUT_OF_STOCK') DEFAULT 'ACTIVE',
+    is_featured BOOLEAN DEFAULT FALSE,
+    is_new BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_products_id PRIMARY KEY (id),
+
+    CONSTRAINT nn_products_category_id CHECK (category_id IS NOT NULL),
+    CONSTRAINT nn_products_name CHECK (name IS NOT NULL),
+    CONSTRAINT nn_products_sku CHECK (sku IS NOT NULL),
+    CONSTRAINT nn_products_price CHECK (price IS NOT NULL),
+    CONSTRAINT nn_products_stock CHECK (stock IS NOT NULL),
+    CONSTRAINT nn_products_status CHECK (status IS NOT NULL),
+
+    CONSTRAINT fk_products_category_id
+        FOREIGN KEY (category_id)
+        REFERENCES categories(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT uk_products_sku UNIQUE (sku),
+
+    CONSTRAINT chk_products_price CHECK (price >= 0),
+    CONSTRAINT chk_products_status CHECK (
+        status IN ('ACTIVE', 'INACTIVE', 'OUT_OF_STOCK')
+    )
+) ENGINE=InnoDB;
