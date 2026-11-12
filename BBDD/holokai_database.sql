@@ -248,3 +248,36 @@ CREATE TABLE carts (
         status IN ('ACTIVE', 'CONVERTED', 'ABANDONED')
     )
 ) ENGINE=InnoDB;
+
+-- ====================
+-- 8. CARRITO PRODUCTOS
+-- ====================
+CREATE TABLE cart_items (
+    id BIGINT UNSIGNED AUTO_INCREMENT,
+    cart_id BIGINT UNSIGNED,
+    product_id BIGINT UNSIGNED,
+    quantity INT UNSIGNED,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_cart_items_id PRIMARY KEY (id),
+
+    CONSTRAINT nn_cart_items_cart_id CHECK (cart_id IS NOT NULL),
+    CONSTRAINT nn_cart_items_product_id CHECK (product_id IS NOT NULL),
+    CONSTRAINT nn_cart_items_quantity CHECK (quantity IS NOT NULL),
+
+    CONSTRAINT fk_cart_items_cart_id
+        FOREIGN KEY (cart_id)
+        REFERENCES carts(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_cart_items_product_id
+        FOREIGN KEY (product_id)
+        REFERENCES products(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT uk_cart_items_cart_product UNIQUE (cart_id, product_id),
+
+    CONSTRAINT chk_cart_items_quantity CHECK (quantity > 0)
+) ENGINE=InnoDB;
