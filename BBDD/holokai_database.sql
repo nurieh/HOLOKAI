@@ -382,3 +382,49 @@ CREATE TABLE orders (
         )
     )
 ) ENGINE=InnoDB;
+
+-- =====================
+-- 11. PROCUCTOS PEDIDOS
+-- =====================
+CREATE TABLE order_items (
+    id BIGINT UNSIGNED AUTO_INCREMENT,
+    order_id BIGINT UNSIGNED,
+    product_id BIGINT UNSIGNED,
+    product_name VARCHAR(180),
+    product_sku VARCHAR(80),
+    unit_price DECIMAL(10,2),
+    quantity INT UNSIGNED,
+    subtotal DECIMAL(10,2),
+
+    CONSTRAINT pk_order_items_id PRIMARY KEY (id),
+
+    CONSTRAINT nn_order_items_order_id CHECK (order_id IS NOT NULL),
+    CONSTRAINT nn_order_items_product_id CHECK (product_id IS NOT NULL),
+    CONSTRAINT nn_order_items_product_name CHECK (product_name IS NOT NULL),
+    CONSTRAINT nn_order_items_product_sku CHECK (product_sku IS NOT NULL),
+    CONSTRAINT nn_order_items_unit_price CHECK (unit_price IS NOT NULL),
+    CONSTRAINT nn_order_items_quantity CHECK (quantity IS NOT NULL),
+    CONSTRAINT nn_order_items_subtotal CHECK (subtotal IS NOT NULL),
+
+    CONSTRAINT fk_order_items_order_id
+        FOREIGN KEY (order_id)
+        REFERENCES orders(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_order_items_product_id
+        FOREIGN KEY (product_id)
+        REFERENCES products(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT chk_order_items_price CHECK (unit_price >= 0),
+    CONSTRAINT chk_order_items_quantity CHECK (quantity > 0),
+    CONSTRAINT chk_order_items_subtotal CHECK (
+        subtotal = unit_price * quantity
+    )
+) ENGINE=InnoDB;
+
+-- =========
+-- 12. PAGOS
+-- =========
