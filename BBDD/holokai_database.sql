@@ -428,3 +428,32 @@ CREATE TABLE order_items (
 -- =========
 -- 12. PAGOS
 -- =========
+CREATE TABLE payments (
+    id BIGINT UNSIGNED AUTO_INCREMENT,
+    order_id BIGINT UNSIGNED,
+    payment_method ENUM('CARD', 'PAYPAL', 'SIMULATED') DEFAULT 'SIMULATED',
+    amount DECIMAL(10,2),
+    status ENUM('PENDING', 'APPROVED', 'REJECTED', 'REFUNDED') DEFAULT 'PENDING',
+    transaction_reference VARCHAR(120),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_payments_id PRIMARY KEY (id),
+
+    CONSTRAINT nn_payments_order_id CHECK (order_id IS NOT NULL),
+    CONSTRAINT nn_payments_payment_method CHECK (payment_method IS NOT NULL),
+    CONSTRAINT nn_payments_amount CHECK (amount IS NOT NULL),
+    CONSTRAINT nn_payments_status CHECK (status IS NOT NULL),
+
+    CONSTRAINT fk_payments_order_id
+        FOREIGN KEY (order_id)
+        REFERENCES orders(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT uk_payments_transaction_reference UNIQUE (transaction_reference),
+
+    CONSTRAINT chk_payments_amount CHECK (amount >= 0),
+    CONSTRAINT chk_payments_status CHECK (
+        status IN ('PENDING', 'APPROVED', 'REJECTED', 'REFUNDED')
+    )
+) ENGINE=InnoDB;
