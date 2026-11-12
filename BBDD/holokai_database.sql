@@ -5,9 +5,9 @@ COLLATE utf8mb4_0900_ai_ci;
 USE holokai;
 
 
--- =========
+-- ========
 -- 1. USERS
--- =========
+-- ========
 CREATE TABLE users (
     id BIGINT UNSIGNED AUTO_INCREMENT,
     first_name VARCHAR(80),
