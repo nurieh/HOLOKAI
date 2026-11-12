@@ -308,3 +308,77 @@ CREATE TABLE favorites (
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- ===========
+-- 10. PEDIDOS
+-- ===========
+CREATE TABLE orders (
+    id BIGINT UNSIGNED AUTO_INCREMENT,
+    order_number VARCHAR(40),
+    user_id BIGINT UNSIGNED,
+    coupon_id BIGINT UNSIGNED,
+
+    recipient_name VARCHAR(160),
+    phone VARCHAR(25),
+    street VARCHAR(220),
+    city VARCHAR(100),
+    postal_code VARCHAR(15),
+    province VARCHAR(100),
+    country VARCHAR(100) DEFAULT 'España',
+
+    subtotal DECIMAL(10,2),
+    discount DECIMAL(10,2) DEFAULT 0.00,
+    shipping_cost DECIMAL(10,2) DEFAULT 0.00,
+    total DECIMAL(10,2),
+
+    status ENUM(
+        'PENDING', 'CONFIRMED', 'PREPARING',
+        'SHIPPED', 'DELIVERED', 'CANCELLED'
+    ) DEFAULT 'PENDING',
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_orders_id PRIMARY KEY (id),
+
+    CONSTRAINT nn_orders_order_number CHECK (order_number IS NOT NULL),
+    CONSTRAINT nn_orders_user_id CHECK (user_id IS NOT NULL),
+    CONSTRAINT nn_orders_recipient_name CHECK (recipient_name IS NOT NULL),
+    CONSTRAINT nn_orders_phone CHECK (phone IS NOT NULL),
+    CONSTRAINT nn_orders_street CHECK (street IS NOT NULL),
+    CONSTRAINT nn_orders_city CHECK (city IS NOT NULL),
+    CONSTRAINT nn_orders_postal_code CHECK (postal_code IS NOT NULL),
+    CONSTRAINT nn_orders_province CHECK (province IS NOT NULL),
+    CONSTRAINT nn_orders_country CHECK (country IS NOT NULL),
+    CONSTRAINT nn_orders_subtotal CHECK (subtotal IS NOT NULL),
+    CONSTRAINT nn_orders_discount CHECK (discount IS NOT NULL),
+    CONSTRAINT nn_orders_shipping_cost CHECK (shipping_cost IS NOT NULL),
+    CONSTRAINT nn_orders_total CHECK (total IS NOT NULL),
+    CONSTRAINT nn_orders_status CHECK (status IS NOT NULL),
+
+    CONSTRAINT fk_orders_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_orders_coupon_id
+        FOREIGN KEY (coupon_id)
+        REFERENCES coupons(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT uk_orders_order_number UNIQUE (order_number),
+
+    CONSTRAINT chk_orders_subtotal CHECK (subtotal >= 0),
+    CONSTRAINT chk_orders_discount CHECK (discount >= 0 AND discount <= subtotal),
+    CONSTRAINT chk_orders_shipping CHECK (shipping_cost >= 0),
+    CONSTRAINT chk_orders_total CHECK (
+        total = subtotal - discount + shipping_cost
+    ),
+    CONSTRAINT chk_orders_status CHECK (
+        status IN (
+            'PENDING', 'CONFIRMED', 'PREPARING',
+            'SHIPPED', 'DELIVERED', 'CANCELLED'
+        )
+    )
+) ENGINE=InnoDB;
