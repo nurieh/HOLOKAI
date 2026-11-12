@@ -180,3 +180,37 @@ CREATE TABLE products (
         status IN ('ACTIVE', 'INACTIVE', 'OUT_OF_STOCK')
     )
 ) ENGINE=InnoDB;
+
+-- ===================
+-- 6. PRODUCTOS IMAGEN
+-- ===================
+
+CREATE TABLE product_images (
+    id BIGINT UNSIGNED AUTO_INCREMENT,
+    product_id BIGINT UNSIGNED,
+    image_url VARCHAR(500),
+    is_main BOOLEAN DEFAULT FALSE,
+
+    main_product_id BIGINT UNSIGNED
+        GENERATED ALWAYS AS (
+            CASE WHEN is_main = TRUE THEN product_id ELSE NULL END
+        ) STORED,
+
+    position INT UNSIGNED DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_product_images_id PRIMARY KEY (id),
+
+    CONSTRAINT nn_product_images_product_id CHECK (product_id IS NOT NULL),
+    CONSTRAINT nn_product_images_image_url CHECK (image_url IS NOT NULL),
+    CONSTRAINT nn_product_images_is_main CHECK (is_main IS NOT NULL),
+    CONSTRAINT nn_product_images_position CHECK (position IS NOT NULL),
+
+    CONSTRAINT fk_product_images_product_id
+        FOREIGN KEY (product_id)
+        REFERENCES products(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT uk_product_images_main UNIQUE (main_product_id)
+) ENGINE=InnoDB;
