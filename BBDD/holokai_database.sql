@@ -281,3 +281,30 @@ CREATE TABLE cart_items (
 
     CONSTRAINT chk_cart_items_quantity CHECK (quantity > 0)
 ) ENGINE=InnoDB;
+
+-- ============
+-- 9. FAVORITOS
+-- ============
+CREATE TABLE favorites (
+    user_id BIGINT UNSIGNED,
+    product_id BIGINT UNSIGNED,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_favorites_user_product PRIMARY KEY (user_id, product_id),
+
+    CONSTRAINT nn_favorites_user_id CHECK (user_id IS NOT NULL),
+    CONSTRAINT nn_favorites_product_id CHECK (product_id IS NOT NULL),
+
+    CONSTRAINT fk_favorites_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_favorites_product_id
+        FOREIGN KEY (product_id)
+        REFERENCES products(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
