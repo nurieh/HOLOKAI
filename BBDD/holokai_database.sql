@@ -215,9 +215,9 @@ CREATE TABLE product_images (
     CONSTRAINT uk_product_images_main UNIQUE (main_product_id)
 ) ENGINE=InnoDB;
 
--- =========
--- 7. CARTAS
--- =========
+-- ==========
+-- 7. CARRITO
+-- ==========
 CREATE TABLE carts (
     id BIGINT UNSIGNED AUTO_INCREMENT,
     user_id BIGINT UNSIGNED,
