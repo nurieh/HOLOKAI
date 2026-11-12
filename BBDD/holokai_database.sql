@@ -28,3 +28,27 @@ CREATE TABLE users (
     CONSTRAINT chk_users_status CHECK (status IN ('ACTIVE', 'INACTIVE', 'BLOCKED')
     )
 ) ENGINE=InnoDB;
+
+
+-- ==============
+-- 2. DIRECCIONES
+-- ==============
+CREATE TABLE addresses (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,
+    recipient_name VARCHAR(160) NOT NULL,
+    phone VARCHAR(25) NOT NULL,
+    street VARCHAR(220) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    postal_code VARCHAR(15) NOT NULL,
+    province VARCHAR(100) NOT NULL,
+    country VARCHAR(100) NOT NULL DEFAULT 'España',
+    is_default BOOLEAN NOT NULL DEFAULT FALSE,
+    default_user_id BIGINT UNSIGNED
+        GENERATED ALWAYS AS (CASE WHEN is_default = TRUE THEN user_id ELSE NULL END) STORED,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_addresses_user FOREIGN KEY (user_id)
+        REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT uq_addresses_one_default UNIQUE (default_user_id),
+    INDEX idx_addresses_user (user_id)
+) ENGINE=InnoDB;
