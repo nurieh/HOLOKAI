@@ -214,3 +214,37 @@ CREATE TABLE product_images (
 
     CONSTRAINT uk_product_images_main UNIQUE (main_product_id)
 ) ENGINE=InnoDB;
+
+-- =========
+-- 7. CARTAS
+-- =========
+CREATE TABLE carts (
+    id BIGINT UNSIGNED AUTO_INCREMENT,
+    user_id BIGINT UNSIGNED,
+    status ENUM('ACTIVE', 'CONVERTED', 'ABANDONED') DEFAULT 'ACTIVE',
+
+    active_user_id BIGINT UNSIGNED
+        GENERATED ALWAYS AS (
+            CASE WHEN status = 'ACTIVE' THEN user_id ELSE NULL END
+        ) STORED,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_carts_id PRIMARY KEY (id),
+
+    CONSTRAINT nn_carts_user_id CHECK (user_id IS NOT NULL),
+    CONSTRAINT nn_carts_status CHECK (status IS NOT NULL),
+
+    CONSTRAINT fk_carts_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT uk_carts_active_user UNIQUE (active_user_id),
+
+    CONSTRAINT chk_carts_status CHECK (
+        status IN ('ACTIVE', 'CONVERTED', 'ABANDONED')
+    )
+) ENGINE=InnoDB;
