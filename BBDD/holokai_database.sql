@@ -52,3 +52,22 @@ CREATE TABLE addresses (
     CONSTRAINT uq_addresses_one_default UNIQUE (default_user_id),
     INDEX idx_addresses_user (user_id)
 ) ENGINE=InnoDB;
+
+
+-- =============
+-- 3. CATEGORIAS
+-- =============
+CREATE TABLE categories (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT NULL,
+    image_url VARCHAR(500) NULL,
+    parent_id BIGINT UNSIGNED NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_categories_name UNIQUE (name),
+    CONSTRAINT fk_categories_parent FOREIGN KEY (parent_id)
+        REFERENCES categories(id) ON UPDATE CASCADE ON DELETE SET NULL,
+    INDEX idx_categories_parent (parent_id),
+    INDEX idx_categories_active (is_active)
+) ENGINE=InnoDB;
