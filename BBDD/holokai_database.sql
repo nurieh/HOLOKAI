@@ -1,3 +1,10 @@
+CREATE DATABASE IF NOT EXISTS holokai
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_0900_ai_ci;
+
+USE holokai;
+
+
 -- =========
 -- 1. USERS
 -- =========
@@ -661,3 +668,5 @@ CREATE TABLE event_results (
     CONSTRAINT chk_event_results_position CHECK (position > 0),
     CONSTRAINT chk_event_results_points CHECK (points >= 0)
 ) ENGINE=InnoDB;
+
+SHOW TABLES;
