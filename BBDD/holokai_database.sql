@@ -627,3 +627,37 @@ CREATE TABLE event_registrations (
         payment_status IN ('NOT_REQUIRED', 'PENDING', 'PAID', 'REFUNDED')
     )
 ) ENGINE=InnoDB;
+
+
+-- ======================
+-- 16. EVENTOS RESULTADOS
+-- ======================
+CREATE TABLE event_results (
+    id BIGINT UNSIGNED AUTO_INCREMENT,
+    event_id BIGINT UNSIGNED,
+    user_id BIGINT UNSIGNED,
+    position INT UNSIGNED,
+    points DECIMAL(8,2) DEFAULT 0.00,
+    prize VARCHAR(180),
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_event_results_id PRIMARY KEY (id),
+
+    CONSTRAINT nn_event_results_event_id CHECK (event_id IS NOT NULL),
+    CONSTRAINT nn_event_results_user_id CHECK (user_id IS NOT NULL),
+    CONSTRAINT nn_event_results_position CHECK (position IS NOT NULL),
+    CONSTRAINT nn_event_results_points CHECK (points IS NOT NULL),
+
+    CONSTRAINT fk_event_results_registration
+        FOREIGN KEY (event_id, user_id)
+        REFERENCES event_registrations(event_id, user_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT uk_event_results_event_user UNIQUE (event_id, user_id),
+    CONSTRAINT uk_event_results_event_position UNIQUE (event_id, position),
+
+    CONSTRAINT chk_event_results_position CHECK (position > 0),
+    CONSTRAINT chk_event_results_points CHECK (points >= 0)
+) ENGINE=InnoDB;
