@@ -537,3 +537,50 @@ CREATE TABLE coupon_redemptions (
 
     CONSTRAINT chk_coupon_redemptions_discount CHECK (discount_applied >= 0)
 ) ENGINE=InnoDB;
+
+-- ===========
+-- 15. EVENTOS
+-- ===========
+CREATE TABLE events (
+    id BIGINT UNSIGNED AUTO_INCREMENT,
+    title VARCHAR(180),
+    description TEXT,
+    event_type ENUM('TOURNAMENT', 'RELEASE', 'CASUAL', 'WORKSHOP', 'SPECIAL')
+        DEFAULT 'TOURNAMENT',
+    game_name VARCHAR(100),
+    image_url VARCHAR(500),
+    location VARCHAR(220),
+    event_date DATETIME,
+    end_date DATETIME,
+    max_participants INT UNSIGNED,
+    entry_fee DECIMAL(10,2) DEFAULT 0.00,
+    prize_description TEXT,
+    status ENUM('DRAFT', 'PUBLISHED', 'FULL', 'CANCELLED', 'COMPLETED')
+        DEFAULT 'DRAFT',
+    created_by BIGINT UNSIGNED,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_events_id PRIMARY KEY (id),
+
+    CONSTRAINT nn_events_title CHECK (title IS NOT NULL),
+    CONSTRAINT nn_events_event_type CHECK (event_type IS NOT NULL),
+    CONSTRAINT nn_events_location CHECK (location IS NOT NULL),
+    CONSTRAINT nn_events_event_date CHECK (event_date IS NOT NULL),
+    CONSTRAINT nn_events_max_participants CHECK (max_participants IS NOT NULL),
+    CONSTRAINT nn_events_entry_fee CHECK (entry_fee IS NOT NULL),
+    CONSTRAINT nn_events_status CHECK (status IS NOT NULL),
+    CONSTRAINT nn_events_created_by CHECK (created_by IS NOT NULL),
+
+    CONSTRAINT fk_events_created_by
+        FOREIGN KEY (created_by)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT chk_events_capacity CHECK (max_participants > 0),
+    CONSTRAINT chk_events_entry_fee CHECK (entry_fee >= 0),
+    CONSTRAINT chk_events_dates CHECK (
+        end_date IS NULL OR event_date < end_date
+    )
+) ENGINE=InnoDB;
