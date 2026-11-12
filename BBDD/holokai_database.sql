@@ -457,3 +457,40 @@ CREATE TABLE payments (
         status IN ('PENDING', 'APPROVED', 'REJECTED', 'REFUNDED')
     )
 ) ENGINE=InnoDB;
+
+-- ==============
+-- 13. MOVIMIENTO
+-- ==============
+CREATE TABLE stock_movements (
+    id BIGINT UNSIGNED AUTO_INCREMENT,
+    product_id BIGINT UNSIGNED,
+    user_id BIGINT UNSIGNED,
+    movement_type ENUM('ENTRY', 'SALE', 'RETURN', 'ADJUSTMENT'),
+    quantity INT UNSIGNED,
+    previous_stock INT UNSIGNED,
+    new_stock INT UNSIGNED,
+    reason VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_stock_movements_id PRIMARY KEY (id),
+
+    CONSTRAINT nn_stock_movements_product_id CHECK (product_id IS NOT NULL),
+    CONSTRAINT nn_stock_movements_type CHECK (movement_type IS NOT NULL),
+    CONSTRAINT nn_stock_movements_quantity CHECK (quantity IS NOT NULL),
+    CONSTRAINT nn_stock_movements_previous_stock CHECK (previous_stock IS NOT NULL),
+    CONSTRAINT nn_stock_movements_new_stock CHECK (new_stock IS NOT NULL),
+
+    CONSTRAINT fk_stock_movements_product_id
+        FOREIGN KEY (product_id)
+        REFERENCES products(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_stock_movements_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT chk_stock_movements_quantity CHECK (quantity > 0)
+) ENGINE=InnoDB;
