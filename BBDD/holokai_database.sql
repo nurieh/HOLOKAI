@@ -584,3 +584,46 @@ CREATE TABLE events (
         end_date IS NULL OR event_date < end_date
     )
 ) ENGINE=InnoDB;
+
+-- ====================
+-- 16. EVENTOS REGISTRO
+-- ====================
+CREATE TABLE event_registrations (
+    id BIGINT UNSIGNED AUTO_INCREMENT,
+    event_id BIGINT UNSIGNED,
+    user_id BIGINT UNSIGNED,
+    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('CONFIRMED', 'WAITLIST', 'CANCELLED', 'ATTENDED', 'NO_SHOW')
+        DEFAULT 'CONFIRMED',
+    payment_status ENUM('NOT_REQUIRED', 'PENDING', 'PAID', 'REFUNDED')
+        DEFAULT 'NOT_REQUIRED',
+
+    CONSTRAINT pk_event_registrations_id PRIMARY KEY (id),
+
+    CONSTRAINT nn_event_registrations_event_id CHECK (event_id IS NOT NULL),
+    CONSTRAINT nn_event_registrations_user_id CHECK (user_id IS NOT NULL),
+    CONSTRAINT nn_event_registrations_status CHECK (status IS NOT NULL),
+    CONSTRAINT nn_event_registrations_payment_status CHECK (payment_status IS NOT NULL),
+
+    CONSTRAINT fk_event_registrations_event_id
+        FOREIGN KEY (event_id)
+        REFERENCES events(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_event_registrations_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT uk_event_registrations_event_user UNIQUE (event_id, user_id),
+
+    CONSTRAINT chk_event_registrations_status CHECK (
+        status IN ('CONFIRMED', 'WAITLIST', 'CANCELLED', 'ATTENDED', 'NO_SHOW')
+    ),
+
+    CONSTRAINT chk_event_registrations_payment CHECK (
+        payment_status IN ('NOT_REQUIRED', 'PENDING', 'PAID', 'REFUNDED')
+    )
+) ENGINE=InnoDB;
