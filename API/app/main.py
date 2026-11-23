@@ -1,6 +1,6 @@
 
 from fastapi import FastAPI
-from app.routers import products, categories
+from app.routers import products, categories, events
 
 app = FastAPI(
     title="HOLOKAI API",
@@ -17,6 +17,11 @@ app.include_router(
 # Endpoints de categorias
 app.include_router(
     categories.router,
+    prefix="/api/v1"
+)
+
+app.include_router(
+    events.router,
     prefix="/api/v1"
 )
 
