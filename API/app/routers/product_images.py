@@ -22,7 +22,7 @@ product_images = {
     1: {
         "id": 1,
         "product_id": 1,
-        "image_url": "https://example.com/pokemon-booster.jpg",
+        "image_url": "https://m.media-amazon.com/images/I/81LpNlzjQ+L.jpg",
         "is_main": True,
         "position": 0,
         "created_at": datetime.now()
@@ -30,7 +30,7 @@ product_images = {
     2: {
         "id": 2,
         "product_id": 1,
-        "image_url": "https://example.com/pokemon-booster-back.jpg",
+        "image_url": "https://m.media-amazon.com/images/I/81MBd6fTGSL._AC_SL1500_.jpg",
         "is_main": False,
         "position": 1,
         "created_at": datetime.now()
@@ -38,7 +38,7 @@ product_images = {
     3: {
         "id": 3,
         "product_id": 2,
-        "image_url": "https://example.com/yugioh-booster.jpg",
+        "image_url": "https://m.media-amazon.com/images/I/61sKqo7Z6ZL._AC_SL1000_.jpg",
         "is_main": True,
         "position": 0,
         "created_at": datetime.now()
@@ -82,29 +82,16 @@ def unset_main_images(product_id: int, exclude_id: int = None):
             image["is_main"] = False
 
 
-# 1. Listar imágenes de un producto
-@router.get(
-    "/",
-    response_model=list[ProductImageResponse]
-)
-def get_product_images(
-    product_id: int = Path(gt=0)
-):
+# Listar imágenes de un producto
+@router.get("/",response_model=list[ProductImageResponse])
+def get_product_images(product_id: int = Path(gt=0)):
     check_product(product_id)
 
-    images = [
-        image
-        for image in product_images.values()
-        if image["product_id"] == product_id
-    ]
+    images = [image for image in product_images.values() if image["product_id"] == product_id]
 
-    return sorted(
-        images,
-        key=lambda image: (image["position"], image["id"])
-    )
+    return sorted(images, key=lambda image: (image["position"], image["id"]))
 
-
-# 2. Consultar una imagen concreta
+# Consultar una imagen concreta
 @router.get(
     "/{image_id}",
     response_model=ProductImageResponse
@@ -116,7 +103,7 @@ def get_product_image_by_id(
     return get_product_image(product_id, image_id)
 
 
-# 3. Añadir una imagen
+# Añadir una imagen
 @router.post(
     "/",
     response_model=ProductImageResponse,
@@ -146,7 +133,7 @@ def create_product_image(
     return new_image
 
 
-# 4. Actualizar una imagen
+# Actualizar una imagen
 @router.put(
     "/{image_id}",
     response_model=ProductImageResponse
@@ -181,12 +168,10 @@ def update_product_image(
     return image
 
 
-# 5. Eliminar una imagen
+# Eliminar una imagen
 @router.delete("/{image_id}")
-def delete_product_image(
-    product_id: int = Path(gt=0),
-    image_id: int = Path(gt=0)
-):
+def delete_product_image(product_id: int = Path(gt=0), image_id: int = Path(gt=0)):
+
     image = get_product_image(product_id, image_id)
 
     del product_images[image_id]

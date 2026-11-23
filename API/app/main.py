@@ -1,6 +1,6 @@
 
 from fastapi import FastAPI
-from app.routers import products, categories
+from app.routers import products, categories, product_images
 
 app = FastAPI(
     title="HOLOKAI API",
@@ -8,17 +8,9 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Endpoints de productos
-app.include_router(
-    products.router,
-    prefix="/api/v1"
-)
-
-# Endpoints de categorias
-app.include_router(
-    categories.router,
-    prefix="/api/v1"
-)
+app.include_router(products.router, prefix="/api/v1")
+app.include_router(categories.router, prefix="/api/v1")
+app.include_router(product_images.router, prefix="/api/v1")
 
 
 @app.get("/")
@@ -31,6 +23,4 @@ def home():
 
 @app.get("/health")
 def health():
-    return {
-        "status": "ok"
-    }
+    return {"status": "ok"}
