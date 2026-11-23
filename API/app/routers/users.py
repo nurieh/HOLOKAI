@@ -1,7 +1,9 @@
 
 from datetime import datetime
-from fastapi import APIRouter, HTTPException, Path, Query, status
+from fastapi import APIRouter, HTTPException, Path, Query, status, Depends
 from pwdlib import PasswordHash
+
+from app.core.dependencies import get_current_admin
 
 from app.schemas.user import (
     UserCreate,
@@ -17,13 +19,6 @@ router = APIRouter(
 )
 
 password_hash = PasswordHash.recommended()
-
-
-# Almacenamiento temporal de usuarios
-users = {}
-
-next_id = 1
-
 
 # Generar hash de contraseña
 def hash_password(password: str) -> str:
@@ -57,15 +52,47 @@ def get_existing_user(user_id: int):
 
     return user
 
+# Almacenamiento temporal de usuarios
+users = {
+    1: {
+        "id": 1,
+        "first_name": "Administrador",
+        "last_name": "HOLOKAI",
+        "email": "admin@holokai.com",
+        "password_hash": hash_password("Admin12345"),
+        "phone": "600000001",
+        "avatar_url": None,
+        "role": UserRole.ADMIN,
+        "status": UserStatus.ACTIVE,
+        "created_at": datetime.now(),
+        "updated_at": datetime.now()
+    },
+    2: {
+        "id": 2,
+        "first_name": "Cliente",
+        "last_name": "Prueba",
+        "email": "cliente@holokai.com",
+        "password_hash": hash_password("Cliente12345"),
+        "phone": "600000002",
+        "avatar_url": None,
+        "role": UserRole.CUSTOMER,
+        "status": UserStatus.ACTIVE,
+        "created_at": datetime.now(),
+        "updated_at": datetime.now()
+    }
+}
 
-# 1. Listar usuarios
+next_id = 3
+
+# Listar usuarios
 @router.get("/", response_model=list[UserResponse])
 def get_users(
     search: str = Query(default=None),
     role: UserRole = Query(default=None),
     user_status: UserStatus = Query(default=None, alias="status"),
     page: int = Query(default=1, ge=1),
-    limit: int = Query(default=20, ge=1, le=100)
+    limit: int = Query(default=20, ge=1, le=100),
+    current_admin: dict = Depends(get_current_admin)
 ):
     result = list(users.values())
 
@@ -93,13 +120,16 @@ def get_users(
     return result[start:start + limit]
 
 
-# 2. Consultar usuario por ID
+# Consultar usuario por ID
 @router.get("/{user_id}", response_model=UserResponse)
-def get_user(user_id: int = Path(gt=0)):
+def get_user(
+        user_id: int = Path(gt=0),
+        current_admin: dict = Depends(get_current_admin)
+):
     return get_existing_user(user_id)
 
 
-# 3. Registrar usuario
+# Registrar usuario
 @router.post(
     "/",
     response_model=UserResponse,
@@ -121,7 +151,7 @@ def create_user(user_data: UserCreate):
         "password_hash": hash_password(user_data.password),
         "phone": user_data.phone,
         "avatar_url": user_data.avatar_url,
-        "role": user_data.role,
+        "role": UserRole.CUSTOMER,
         "status": UserStatus.ACTIVE,
         "created_at": now,
         "updated_at": now
@@ -133,11 +163,12 @@ def create_user(user_data: UserCreate):
     return new_user
 
 
-# 4. Actualizar usuario
+# Actualizar usuario
 @router.put("/{user_id}", response_model=UserResponse)
 def update_user(
     user_data: UserUpdate,
-    user_id: int = Path(gt=0)
+    user_id: int = Path(gt=0),
+    current_admin: dict = Depends(get_current_admin)
 ):
     user = get_existing_user(user_id)
 
@@ -174,7 +205,10 @@ def update_user(
 
 # 5. Desactivar usuario
 @router.delete("/{user_id}")
-def delete_user(user_id: int = Path(gt=0)):
+def delete_user(
+        user_id: int = Path(gt=0),
+        current_admin: dict = Depends(get_current_admin)
+):
     user = get_existing_user(user_id)
 
     if user["status"] == UserStatus.INACTIVE:

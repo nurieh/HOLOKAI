@@ -16,7 +16,7 @@ router = APIRouter(
 )
 
 
-# 1. Inicio de sesión
+# Inicio de sesión
 @router.post("/login")
 def login(
     form_data: OAuth2PasswordRequestForm = Depends()

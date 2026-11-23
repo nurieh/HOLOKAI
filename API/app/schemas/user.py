@@ -31,7 +31,6 @@ class UserBase(BaseModel):
 # Esquema para registrar un usuario
 class UserCreate(UserBase):
     password: str = Field(min_length=8, max_length=128)
-    role: UserRole = UserRole.CUSTOMER
 
 
 # Esquema para actualizar un usuario
