@@ -1,11 +1,13 @@
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 
 from app.schemas.category import (
     CategoryCreate,
     CategoryUpdate,
     CategoryResponse
 )
+
+from app.core.dependencies import get_current_admin
 
 router = APIRouter(
     prefix="/categories",
@@ -73,7 +75,10 @@ def get_category(category_id: int):
     response_model=CategoryResponse,
     status_code=status.HTTP_201_CREATED
 )
-def create_category(category: CategoryCreate):
+def create_category(
+    category: CategoryCreate,
+    current_admin: dict = Depends(get_current_admin)
+):
 
     global next_id
 
@@ -105,7 +110,11 @@ def create_category(category: CategoryCreate):
     "/{category_id}",
     response_model=CategoryResponse
 )
-def update_category(category_id: int, category: CategoryUpdate):
+def update_category(
+    category_id: int,
+    category: CategoryUpdate,
+    current_admin: dict = Depends(get_current_admin)
+):
 
     existing_category = categories.get(category_id)
 
@@ -137,7 +146,10 @@ def update_category(category_id: int, category: CategoryUpdate):
 
 # DELETE: Desactivar una categoría
 @router.delete("/{category_id}")
-def delete_category(category_id: int):
+def delete_category(
+    category_id: int,
+    current_admin: dict = Depends(get_current_admin)
+):
 
     category = categories.get(category_id)
 

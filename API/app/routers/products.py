@@ -2,7 +2,7 @@
 from datetime import datetime
 from decimal import Decimal
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, status, Depends
 
 from app.schemas.product import (
     ProductCreate,
@@ -10,6 +10,8 @@ from app.schemas.product import (
     ProductResponse,
     ProductStatus
 )
+
+from app.core.dependencies import get_current_admin
 
 # Importamos temporalmente las categorías
 from app.routers.categories import categories as category_store
@@ -218,7 +220,10 @@ def get_product(product_id: int):
     response_model=ProductResponse,
     status_code=status.HTTP_201_CREATED
 )
-def create_product(product: ProductCreate):
+def create_product(
+    product: ProductCreate,
+    current_admin: dict = Depends(get_current_admin)
+):
 
     global next_id
 
@@ -255,7 +260,8 @@ def create_product(product: ProductCreate):
 )
 def update_product(
     product_id: int,
-    product: ProductUpdate
+    product: ProductUpdate,
+    current_admin: dict = Depends(get_current_admin)
 ):
 
     existing_product = get_existing_product(product_id)
@@ -304,7 +310,10 @@ def update_product(
 # ==========================================
 
 @router.delete("/{product_id}")
-def delete_product(product_id: int):
+def delete_product(
+    product_id: int,
+    current_admin: dict = Depends(get_current_admin)
+):
 
     product = get_existing_product(product_id)
 

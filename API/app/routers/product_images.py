@@ -1,6 +1,6 @@
 
 from datetime import datetime
-from fastapi import APIRouter, HTTPException, Path, status
+from fastapi import APIRouter, HTTPException, Path, status, Depends
 
 from app.schemas.product_image import (
     ProductImageCreate,
@@ -9,6 +9,7 @@ from app.schemas.product_image import (
 )
 
 from app.routers.products import products as product_store
+from app.core.dependencies import get_current_admin
 
 
 router = APIRouter(
@@ -111,7 +112,8 @@ def get_product_image_by_id(
 )
 def create_product_image(
     image_data: ProductImageCreate,
-    product_id: int = Path(gt=0)
+    product_id: int = Path(gt=0),
+    current_admin: dict = Depends(get_current_admin)
 ):
     global next_id
 
@@ -141,7 +143,8 @@ def create_product_image(
 def update_product_image(
     image_data: ProductImageUpdate,
     product_id: int = Path(gt=0),
-    image_id: int = Path(gt=0)
+    image_id: int = Path(gt=0),
+    current_admin: dict = Depends(get_current_admin)
 ):
     image = get_product_image(product_id, image_id)
 
@@ -170,7 +173,11 @@ def update_product_image(
 
 # Eliminar una imagen
 @router.delete("/{image_id}")
-def delete_product_image(product_id: int = Path(gt=0), image_id: int = Path(gt=0)):
+def delete_product_image(
+    product_id: int = Path(gt=0),
+    image_id: int = Path(gt=0),
+    current_admin: dict = Depends(get_current_admin)
+):
 
     image = get_product_image(product_id, image_id)
 
