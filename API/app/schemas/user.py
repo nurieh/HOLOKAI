@@ -54,3 +54,17 @@ class UserResponse(UserBase):
     updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+# Esquema para editar el perfil propio
+class UserProfileUpdate(BaseModel):
+    first_name: Optional[str] = Field(default=None, min_length=2, max_length=80)
+    last_name: Optional[str] = Field(default=None, max_length=120)
+    email: Optional[str] = Field(default=None, min_length=5, max_length=190)
+    phone: Optional[str] = Field(default=None, max_length=25)
+    avatar_url: Optional[str] = Field(default=None, max_length=500)
+
+
+# Esquema para cambiar la contraseña
+class UserPasswordChange(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8, max_length=128)

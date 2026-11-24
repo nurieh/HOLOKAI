@@ -3,14 +3,16 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Path, Query, status, Depends
 from pwdlib import PasswordHash
 
-from app.core.dependencies import get_current_admin
+from app.core.dependencies import get_current_admin, get_current_user
 
 from app.schemas.user import (
     UserCreate,
     UserUpdate,
     UserResponse,
     UserRole,
-    UserStatus
+    UserStatus,
+    UserProfileUpdate,
+    UserPasswordChange
 )
 
 router = APIRouter(
@@ -119,16 +121,6 @@ def get_users(
 
     return result[start:start + limit]
 
-
-# Consultar usuario por ID
-@router.get("/{user_id}", response_model=UserResponse)
-def get_user(
-        user_id: int = Path(gt=0),
-        current_admin: dict = Depends(get_current_admin)
-):
-    return get_existing_user(user_id)
-
-
 # Registrar usuario
 @router.post(
     "/",
@@ -161,6 +153,87 @@ def create_user(user_data: UserCreate):
     next_id += 1
 
     return new_user
+
+# Consultar el propio perfil
+@router.get("/me", response_model=UserResponse)
+def get_my_profile(
+    current_user: dict = Depends(get_current_user)
+):
+    return current_user
+
+
+# Actualizar el propio perfil
+@router.put("/me", response_model=UserResponse)
+def update_my_profile(
+    profile_data: UserProfileUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    user_id = current_user["id"]
+
+    update_data = profile_data.model_dump(exclude_unset=True)
+
+    if not update_data:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No se han enviado campos para actualizar"
+        )
+
+    for field, value in update_data.items():
+        if value is None and field not in ("last_name", "phone", "avatar_url"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"El campo '{field}' no puede ser null"
+            )
+
+    if "email" in update_data:
+        email = update_data["email"].strip().lower()
+        check_email(email, exclude_id=user_id)
+        update_data["email"] = email
+
+    current_user.update(update_data)
+    current_user["updated_at"] = datetime.now()
+
+    return current_user
+
+
+# Cambiar la contraseña propia
+@router.put("/me/change-password")
+def change_my_password(
+    password_data: UserPasswordChange,
+    current_user: dict = Depends(get_current_user)
+):
+    if not password_hash.verify(
+        password_data.current_password,
+        current_user["password_hash"]
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La contraseña actual es incorrecta"
+        )
+
+    if password_data.current_password == password_data.new_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La nueva contraseña debe ser diferente"
+        )
+
+    current_user["password_hash"] = hash_password(
+        password_data.new_password
+    )
+
+    current_user["updated_at"] = datetime.now()
+
+    return {
+        "message": "Contraseña actualizada correctamente"
+    }
+
+# Consultar usuario por ID
+@router.get("/{user_id}", response_model=UserResponse)
+def get_user(
+        user_id: int = Path(gt=0),
+        current_admin: dict = Depends(get_current_admin)
+):
+    return get_existing_user(user_id)
 
 
 # Actualizar usuario

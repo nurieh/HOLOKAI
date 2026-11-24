@@ -1,0 +1,2748 @@
+---
+openapi: 3.1.0
+info:
+  title: HOLOKAI API
+  description: API REST para la plataforma HOLOKAI
+  version: 1.0.0
+paths:
+  "/api/v1/products/":
+    get:
+      tags:
+      - Products
+      summary: Get Products
+      operationId: get_products_api_v1_products__get
+      parameters:
+      - name: category_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Category Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - "$ref": "#/components/schemas/ProductStatus"
+          - type: 'null'
+          title: Status
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/ProductResponse"
+                title: Response Get Products Api V1 Products  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    post:
+      tags:
+      - Products
+      summary: Create Product
+      operationId: create_product_api_v1_products__post
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ProductCreate"
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProductResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/products/featured":
+    get:
+      tags:
+      - Products
+      summary: Get Featured Products
+      operationId: get_featured_products_api_v1_products_featured_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  "$ref": "#/components/schemas/ProductResponse"
+                type: array
+                title: Response Get Featured Products Api V1 Products Featured Get
+  "/api/v1/products/new":
+    get:
+      tags:
+      - Products
+      summary: Get New Products
+      operationId: get_new_products_api_v1_products_new_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  "$ref": "#/components/schemas/ProductResponse"
+                type: array
+                title: Response Get New Products Api V1 Products New Get
+  "/api/v1/products/{product_id}":
+    get:
+      tags:
+      - Products
+      summary: Get Product
+      operationId: get_product_api_v1_products__product_id__get
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Product Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProductResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    put:
+      tags:
+      - Products
+      summary: Update Product
+      operationId: update_product_api_v1_products__product_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Product Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ProductUpdate"
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProductResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    delete:
+      tags:
+      - Products
+      summary: Delete Product
+      operationId: delete_product_api_v1_products__product_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Product Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/categories/":
+    get:
+      tags:
+      - Categories
+      summary: Get Categories
+      operationId: get_categories_api_v1_categories__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  "$ref": "#/components/schemas/CategoryResponse"
+                type: array
+                title: Response Get Categories Api V1 Categories  Get
+    post:
+      tags:
+      - Categories
+      summary: Create Category
+      operationId: create_category_api_v1_categories__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CategoryCreate"
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CategoryResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+      security:
+      - OAuth2PasswordBearer: []
+  "/api/v1/categories/{category_id}":
+    get:
+      tags:
+      - Categories
+      summary: Get Category
+      operationId: get_category_api_v1_categories__category_id__get
+      parameters:
+      - name: category_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Category Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CategoryResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    put:
+      tags:
+      - Categories
+      summary: Update Category
+      operationId: update_category_api_v1_categories__category_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: category_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Category Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CategoryUpdate"
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CategoryResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    delete:
+      tags:
+      - Categories
+      summary: Delete Category
+      operationId: delete_category_api_v1_categories__category_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: category_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Category Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/products/{product_id}/images/":
+    get:
+      tags:
+      - Product Images
+      summary: Get Product Images
+      operationId: get_product_images_api_v1_products__product_id__images__get
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: Product Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/ProductImageResponse"
+                title: Response Get Product Images Api V1 Products  Product Id  Images  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    post:
+      tags:
+      - Product Images
+      summary: Create Product Image
+      operationId: create_product_image_api_v1_products__product_id__images__post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: Product Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ProductImageCreate"
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProductImageResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/products/{product_id}/images/{image_id}":
+    get:
+      tags:
+      - Product Images
+      summary: Get Product Image By Id
+      operationId: get_product_image_by_id_api_v1_products__product_id__images__image_id__get
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: Product Id
+      - name: image_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: Image Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProductImageResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    put:
+      tags:
+      - Product Images
+      summary: Update Product Image
+      operationId: update_product_image_api_v1_products__product_id__images__image_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: Product Id
+      - name: image_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: Image Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ProductImageUpdate"
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProductImageResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    delete:
+      tags:
+      - Product Images
+      summary: Delete Product Image
+      operationId: delete_product_image_api_v1_products__product_id__images__image_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: Product Id
+      - name: image_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: Image Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/users/":
+    get:
+      tags:
+      - Users
+      summary: Get Users
+      operationId: get_users_api_v1_users__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Search
+      - name: role
+        in: query
+        required: false
+        schema:
+          "$ref": "#/components/schemas/UserRole"
+      - name: status
+        in: query
+        required: false
+        schema:
+          "$ref": "#/components/schemas/UserStatus"
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/UserResponse"
+                title: Response Get Users Api V1 Users  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    post:
+      tags:
+      - Users
+      summary: Create User
+      operationId: create_user_api_v1_users__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UserCreate"
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UserResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/users/me":
+    get:
+      tags:
+      - Users
+      summary: Get My Profile
+      operationId: get_my_profile_api_v1_users_me_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UserResponse"
+      security:
+      - OAuth2PasswordBearer: []
+    put:
+      tags:
+      - Users
+      summary: Update My Profile
+      operationId: update_my_profile_api_v1_users_me_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UserProfileUpdate"
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UserResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+      security:
+      - OAuth2PasswordBearer: []
+  "/api/v1/users/me/change-password":
+    put:
+      tags:
+      - Users
+      summary: Change My Password
+      operationId: change_my_password_api_v1_users_me_change_password_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UserPasswordChange"
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+      security:
+      - OAuth2PasswordBearer: []
+  "/api/v1/users/{user_id}":
+    get:
+      tags:
+      - Users
+      summary: Get User
+      operationId: get_user_api_v1_users__user_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: User Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UserResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    put:
+      tags:
+      - Users
+      summary: Update User
+      operationId: update_user_api_v1_users__user_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: User Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UserUpdate"
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UserResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    delete:
+      tags:
+      - Users
+      summary: Delete User
+      operationId: delete_user_api_v1_users__user_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: User Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/auth/login":
+    post:
+      tags:
+      - Authentication
+      summary: Login
+      operationId: login_api_v1_auth_login_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              "$ref": "#/components/schemas/Body_login_api_v1_auth_login_post"
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/orders/":
+    get:
+      tags:
+      - Orders
+      summary: Get Orders
+      operationId: get_orders_api_v1_orders__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - "$ref": "#/components/schemas/OrderStatus"
+          - type: 'null'
+          title: Status
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/OrderResponse"
+                title: Response Get Orders Api V1 Orders  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    post:
+      tags:
+      - Orders
+      summary: Create Order
+      operationId: create_order_api_v1_orders__post
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/OrderCreate"
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/OrderResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/orders/{order_id}":
+    get:
+      tags:
+      - Orders
+      summary: Get Order
+      operationId: get_order_api_v1_orders__order_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: Order Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/OrderResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    put:
+      tags:
+      - Orders
+      summary: Update Order
+      operationId: update_order_api_v1_orders__order_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: Order Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/OrderUpdate"
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/OrderResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/orders/{order_id}/cancel":
+    post:
+      tags:
+      - Orders
+      summary: Cancel Order
+      operationId: cancel_order_api_v1_orders__order_id__cancel_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          exclusiveMinimum: 0
+          title: Order Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/payments/":
+    get:
+      tags:
+      - Payments
+      summary: Get Payments
+      operationId: get_payments_api_v1_payments__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: payment_status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - "$ref": "#/components/schemas/PaymentStatus"
+          - type: 'null'
+          title: Payment Status
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 100
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/PaymentResponse"
+                title: Response Get Payments Api V1 Payments  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    post:
+      tags:
+      - Payments
+      summary: Create Payment
+      operationId: create_payment_api_v1_payments__post
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PaymentCreate"
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/PaymentResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/payments/{payment_id}":
+    get:
+      tags:
+      - Payments
+      summary: Get Payment
+      operationId: get_payment_api_v1_payments__payment_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: payment_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Payment Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/PaymentResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    put:
+      tags:
+      - Payments
+      summary: Update Payment
+      operationId: update_payment_api_v1_payments__payment_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: payment_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Payment Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PaymentUpdate"
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/PaymentResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/addresses/":
+    get:
+      tags:
+      - Addresses
+      summary: Get Addresses
+      operationId: get_addresses_api_v1_addresses__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: is_default
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Default
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 100
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/AddressResponse"
+                title: Response Get Addresses Api V1 Addresses  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    post:
+      tags:
+      - Addresses
+      summary: Create Address
+      operationId: create_address_api_v1_addresses__post
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AddressCreate"
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AddressResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/addresses/{address_id}":
+    get:
+      tags:
+      - Addresses
+      summary: Get Address
+      operationId: get_address_api_v1_addresses__address_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: address_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Address Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AddressResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    put:
+      tags:
+      - Addresses
+      summary: Update Address
+      operationId: update_address_api_v1_addresses__address_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: address_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Address Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AddressUpdate"
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AddressResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    delete:
+      tags:
+      - Addresses
+      summary: Delete Address
+      operationId: delete_address_api_v1_addresses__address_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: address_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Address Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/events/":
+    get:
+      tags:
+      - Events
+      summary: Get Events
+      operationId: get_events_api_v1_events__get
+      parameters:
+      - name: event_status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - "$ref": "#/components/schemas/EventStatus"
+          - type: 'null'
+          title: Event Status
+      - name: event_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - "$ref": "#/components/schemas/EventType"
+          - type: 'null'
+          title: Event Type
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 100
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/EventResponse"
+                title: Response Get Events Api V1 Events  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    post:
+      tags:
+      - Events
+      summary: Create Event
+      operationId: create_event_api_v1_events__post
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/EventCreate"
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/EventResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/events/{event_id}":
+    get:
+      tags:
+      - Events
+      summary: Get Event
+      operationId: get_event_api_v1_events__event_id__get
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/EventResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    put:
+      tags:
+      - Events
+      summary: Update Event
+      operationId: update_event_api_v1_events__event_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/EventUpdate"
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/EventResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    delete:
+      tags:
+      - Events
+      summary: Cancel Event
+      operationId: cancel_event_api_v1_events__event_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/":
+    get:
+      summary: Home
+      operationId: home__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  "/health":
+    get:
+      summary: Health
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    AddressCreate:
+      properties:
+        recipient_name:
+          type: string
+          maxLength: 160
+          minLength: 2
+          title: Recipient Name
+        phone:
+          type: string
+          maxLength: 25
+          minLength: 1
+          title: Phone
+        street:
+          type: string
+          maxLength: 220
+          minLength: 1
+          title: Street
+        city:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: City
+        postal_code:
+          type: string
+          maxLength: 15
+          minLength: 1
+          title: Postal Code
+        province:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Province
+        country:
+          type: string
+          maxLength: 100
+          title: Country
+          default: España
+        is_default:
+          type: boolean
+          title: Is Default
+          default: false
+      type: object
+      required:
+      - recipient_name
+      - phone
+      - street
+      - city
+      - postal_code
+      - province
+      title: AddressCreate
+    AddressResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        user_id:
+          type: integer
+          title: User Id
+        recipient_name:
+          type: string
+          title: Recipient Name
+        phone:
+          type: string
+          title: Phone
+        street:
+          type: string
+          title: Street
+        city:
+          type: string
+          title: City
+        postal_code:
+          type: string
+          title: Postal Code
+        province:
+          type: string
+          title: Province
+        country:
+          type: string
+          title: Country
+        is_default:
+          type: boolean
+          title: Is Default
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+      type: object
+      required:
+      - id
+      - user_id
+      - recipient_name
+      - phone
+      - street
+      - city
+      - postal_code
+      - province
+      - country
+      - is_default
+      title: AddressResponse
+    AddressUpdate:
+      properties:
+        recipient_name:
+          anyOf:
+          - type: string
+            maxLength: 160
+            minLength: 2
+          - type: 'null'
+          title: Recipient Name
+        phone:
+          anyOf:
+          - type: string
+            maxLength: 25
+            minLength: 1
+          - type: 'null'
+          title: Phone
+        street:
+          anyOf:
+          - type: string
+            maxLength: 220
+            minLength: 1
+          - type: 'null'
+          title: Street
+        city:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+          - type: 'null'
+          title: City
+        postal_code:
+          anyOf:
+          - type: string
+            maxLength: 15
+            minLength: 1
+          - type: 'null'
+          title: Postal Code
+        province:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+          - type: 'null'
+          title: Province
+        country:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Country
+        is_default:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Default
+      type: object
+      title: AddressUpdate
+    Body_login_api_v1_auth_login_post:
+      properties:
+        grant_type:
+          anyOf:
+          - type: string
+            pattern: "^password$"
+          - type: 'null'
+          title: Grant Type
+        username:
+          type: string
+          title: Username
+        password:
+          type: string
+          format: password
+          title: Password
+        scope:
+          type: string
+          title: Scope
+          default: ''
+        client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Id
+        client_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          format: password
+          title: Client Secret
+      type: object
+      required:
+      - username
+      - password
+      title: Body_login_api_v1_auth_login_post
+    CategoryCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 2
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        image_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Image Url
+        parent_id:
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0
+          - type: 'null'
+          title: Parent Id
+      type: object
+      required:
+      - name
+      title: CategoryCreate
+    CategoryResponse:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 2
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        image_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Image Url
+        parent_id:
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0
+          - type: 'null'
+          title: Parent Id
+        id:
+          type: integer
+          title: Id
+        is_active:
+          type: boolean
+          title: Is Active
+      type: object
+      required:
+      - name
+      - id
+      - is_active
+      title: CategoryResponse
+    CategoryUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 2
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        image_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Image Url
+        parent_id:
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0
+          - type: 'null'
+          title: Parent Id
+        is_active:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Active
+      type: object
+      title: CategoryUpdate
+    EventCreate:
+      properties:
+        title:
+          type: string
+          maxLength: 180
+          minLength: 2
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        event_type:
+          "$ref": "#/components/schemas/EventType"
+          default: TOURNAMENT
+        game_name:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Game Name
+        image_url:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Image Url
+        location:
+          type: string
+          maxLength: 220
+          minLength: 1
+          title: Location
+        event_date:
+          type: string
+          format: date-time
+          title: Event Date
+        end_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+        max_participants:
+          type: integer
+          exclusiveMinimum: 0
+          title: Max Participants
+        entry_fee:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: string
+          title: Entry Fee
+          default: '0.00'
+        prize_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prize Description
+      type: object
+      required:
+      - title
+      - location
+      - event_date
+      - max_participants
+      title: EventCreate
+    EventResponse:
+      properties:
+        title:
+          type: string
+          maxLength: 180
+          minLength: 2
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        event_type:
+          "$ref": "#/components/schemas/EventType"
+          default: TOURNAMENT
+        game_name:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Game Name
+        image_url:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Image Url
+        location:
+          type: string
+          maxLength: 220
+          minLength: 1
+          title: Location
+        event_date:
+          type: string
+          format: date-time
+          title: Event Date
+        end_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+        max_participants:
+          type: integer
+          exclusiveMinimum: 0
+          title: Max Participants
+        entry_fee:
+          type: string
+          title: Entry Fee
+          default: '0.00'
+        prize_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prize Description
+        id:
+          type: integer
+          title: Id
+        status:
+          "$ref": "#/components/schemas/EventStatus"
+        created_by:
+          type: integer
+          title: Created By
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+      type: object
+      required:
+      - title
+      - location
+      - event_date
+      - max_participants
+      - id
+      - status
+      - created_by
+      title: EventResponse
+    EventStatus:
+      type: string
+      enum:
+      - DRAFT
+      - PUBLISHED
+      - FULL
+      - CANCELLED
+      - COMPLETED
+      title: EventStatus
+    EventType:
+      type: string
+      enum:
+      - TOURNAMENT
+      - RELEASE
+      - CASUAL
+      - WORKSHOP
+      - SPECIAL
+      title: EventType
+    EventUpdate:
+      properties:
+        title:
+          anyOf:
+          - type: string
+            maxLength: 180
+            minLength: 2
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        event_type:
+          anyOf:
+          - "$ref": "#/components/schemas/EventType"
+          - type: 'null'
+        game_name:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Game Name
+        image_url:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Image Url
+        location:
+          anyOf:
+          - type: string
+            maxLength: 220
+            minLength: 1
+          - type: 'null'
+          title: Location
+        event_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Event Date
+        end_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+        max_participants:
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0
+          - type: 'null'
+          title: Max Participants
+        entry_fee:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: string
+          - type: 'null'
+          title: Entry Fee
+        prize_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prize Description
+        status:
+          anyOf:
+          - "$ref": "#/components/schemas/EventStatus"
+          - type: 'null'
+      type: object
+      title: EventUpdate
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            "$ref": "#/components/schemas/ValidationError"
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    OrderCreate:
+      properties:
+        items:
+          items:
+            "$ref": "#/components/schemas/OrderItemCreate"
+          type: array
+          minItems: 1
+          title: Items
+        recipient_name:
+          type: string
+          maxLength: 160
+          minLength: 2
+          title: Recipient Name
+        phone:
+          type: string
+          maxLength: 25
+          minLength: 1
+          title: Phone
+        street:
+          type: string
+          maxLength: 220
+          minLength: 1
+          title: Street
+        city:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: City
+        postal_code:
+          type: string
+          maxLength: 15
+          minLength: 1
+          title: Postal Code
+        province:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Province
+        country:
+          type: string
+          maxLength: 100
+          title: Country
+          default: España
+      type: object
+      required:
+      - items
+      - recipient_name
+      - phone
+      - street
+      - city
+      - postal_code
+      - province
+      title: OrderCreate
+    OrderItemCreate:
+      properties:
+        product_id:
+          type: integer
+          exclusiveMinimum: 0
+          title: Product Id
+        quantity:
+          type: integer
+          exclusiveMinimum: 0
+          title: Quantity
+      type: object
+      required:
+      - product_id
+      - quantity
+      title: OrderItemCreate
+    OrderItemResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        order_id:
+          type: integer
+          title: Order Id
+        product_id:
+          type: integer
+          title: Product Id
+        product_name:
+          type: string
+          title: Product Name
+        product_sku:
+          type: string
+          title: Product Sku
+        unit_price:
+          type: string
+          title: Unit Price
+        quantity:
+          type: integer
+          title: Quantity
+        subtotal:
+          type: string
+          title: Subtotal
+      type: object
+      required:
+      - id
+      - order_id
+      - product_id
+      - product_name
+      - product_sku
+      - unit_price
+      - quantity
+      - subtotal
+      title: OrderItemResponse
+    OrderResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        order_number:
+          type: string
+          title: Order Number
+        user_id:
+          type: integer
+          title: User Id
+        coupon_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Coupon Id
+        recipient_name:
+          type: string
+          title: Recipient Name
+        phone:
+          type: string
+          title: Phone
+        street:
+          type: string
+          title: Street
+        city:
+          type: string
+          title: City
+        postal_code:
+          type: string
+          title: Postal Code
+        province:
+          type: string
+          title: Province
+        country:
+          type: string
+          title: Country
+        subtotal:
+          type: string
+          title: Subtotal
+        discount:
+          type: string
+          title: Discount
+        shipping_cost:
+          type: string
+          title: Shipping Cost
+        total:
+          type: string
+          title: Total
+        status:
+          "$ref": "#/components/schemas/OrderStatus"
+        items:
+          items:
+            "$ref": "#/components/schemas/OrderItemResponse"
+          type: array
+          title: Items
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+      type: object
+      required:
+      - id
+      - order_number
+      - user_id
+      - recipient_name
+      - phone
+      - street
+      - city
+      - postal_code
+      - province
+      - country
+      - subtotal
+      - discount
+      - shipping_cost
+      - total
+      - status
+      - items
+      title: OrderResponse
+    OrderStatus:
+      type: string
+      enum:
+      - PENDING
+      - CONFIRMED
+      - PREPARING
+      - SHIPPED
+      - DELIVERED
+      - CANCELLED
+      title: OrderStatus
+    OrderUpdate:
+      properties:
+        status:
+          "$ref": "#/components/schemas/OrderStatus"
+      type: object
+      required:
+      - status
+      title: OrderUpdate
+    PaymentCreate:
+      properties:
+        order_id:
+          type: integer
+          exclusiveMinimum: 0
+          title: Order Id
+        payment_method:
+          "$ref": "#/components/schemas/PaymentMethod"
+          default: SIMULATED
+      type: object
+      required:
+      - order_id
+      title: PaymentCreate
+    PaymentMethod:
+      type: string
+      enum:
+      - CARD
+      - PAYPAL
+      - SIMULATED
+      title: PaymentMethod
+    PaymentResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        order_id:
+          type: integer
+          title: Order Id
+        payment_method:
+          "$ref": "#/components/schemas/PaymentMethod"
+        amount:
+          type: string
+          title: Amount
+        status:
+          "$ref": "#/components/schemas/PaymentStatus"
+        transaction_reference:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Transaction Reference
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+      type: object
+      required:
+      - id
+      - order_id
+      - payment_method
+      - amount
+      - status
+      title: PaymentResponse
+    PaymentStatus:
+      type: string
+      enum:
+      - PENDING
+      - APPROVED
+      - REJECTED
+      - REFUNDED
+      title: PaymentStatus
+    PaymentUpdate:
+      properties:
+        status:
+          "$ref": "#/components/schemas/PaymentStatus"
+      type: object
+      required:
+      - status
+      title: PaymentUpdate
+    ProductCreate:
+      properties:
+        category_id:
+          type: integer
+          exclusiveMinimum: 0
+          title: Category Id
+        name:
+          type: string
+          maxLength: 180
+          minLength: 2
+          title: Name
+        sku:
+          type: string
+          maxLength: 80
+          minLength: 1
+          title: Sku
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        price:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: string
+          title: Price
+        stock:
+          type: integer
+          minimum: 0
+          title: Stock
+          default: 0
+        status:
+          "$ref": "#/components/schemas/ProductStatus"
+          default: ACTIVE
+        is_featured:
+          type: boolean
+          title: Is Featured
+          default: false
+        is_new:
+          type: boolean
+          title: Is New
+          default: false
+      type: object
+      required:
+      - category_id
+      - name
+      - sku
+      - price
+      title: ProductCreate
+    ProductImageCreate:
+      properties:
+        image_url:
+          type: string
+          maxLength: 500
+          minLength: 1
+          title: Image Url
+        is_main:
+          type: boolean
+          title: Is Main
+          default: false
+        position:
+          type: integer
+          minimum: 0
+          title: Position
+          default: 0
+      type: object
+      required:
+      - image_url
+      title: ProductImageCreate
+    ProductImageResponse:
+      properties:
+        image_url:
+          type: string
+          maxLength: 500
+          minLength: 1
+          title: Image Url
+        is_main:
+          type: boolean
+          title: Is Main
+          default: false
+        position:
+          type: integer
+          minimum: 0
+          title: Position
+          default: 0
+        id:
+          type: integer
+          title: Id
+        product_id:
+          type: integer
+          title: Product Id
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+      type: object
+      required:
+      - image_url
+      - id
+      - product_id
+      title: ProductImageResponse
+    ProductImageUpdate:
+      properties:
+        image_url:
+          anyOf:
+          - type: string
+            maxLength: 500
+            minLength: 1
+          - type: 'null'
+          title: Image Url
+        is_main:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Main
+        position:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: Position
+      type: object
+      title: ProductImageUpdate
+    ProductResponse:
+      properties:
+        category_id:
+          type: integer
+          exclusiveMinimum: 0
+          title: Category Id
+        name:
+          type: string
+          maxLength: 180
+          minLength: 2
+          title: Name
+        sku:
+          type: string
+          maxLength: 80
+          minLength: 1
+          title: Sku
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        price:
+          type: string
+          title: Price
+        stock:
+          type: integer
+          minimum: 0
+          title: Stock
+          default: 0
+        status:
+          "$ref": "#/components/schemas/ProductStatus"
+          default: ACTIVE
+        is_featured:
+          type: boolean
+          title: Is Featured
+          default: false
+        is_new:
+          type: boolean
+          title: Is New
+          default: false
+        id:
+          type: integer
+          title: Id
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+      type: object
+      required:
+      - category_id
+      - name
+      - sku
+      - price
+      - id
+      title: ProductResponse
+    ProductStatus:
+      type: string
+      enum:
+      - ACTIVE
+      - INACTIVE
+      - OUT_OF_STOCK
+      title: ProductStatus
+    ProductUpdate:
+      properties:
+        category_id:
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0
+          - type: 'null'
+          title: Category Id
+        name:
+          anyOf:
+          - type: string
+            maxLength: 180
+            minLength: 2
+          - type: 'null'
+          title: Name
+        sku:
+          anyOf:
+          - type: string
+            maxLength: 80
+            minLength: 1
+          - type: 'null'
+          title: Sku
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        price:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: string
+          - type: 'null'
+          title: Price
+        stock:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: Stock
+        status:
+          anyOf:
+          - "$ref": "#/components/schemas/ProductStatus"
+          - type: 'null'
+        is_featured:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Featured
+        is_new:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is New
+      type: object
+      title: ProductUpdate
+    UserCreate:
+      properties:
+        first_name:
+          type: string
+          maxLength: 80
+          minLength: 2
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+            maxLength: 120
+          - type: 'null'
+          title: Last Name
+        email:
+          type: string
+          maxLength: 190
+          minLength: 5
+          title: Email
+        phone:
+          anyOf:
+          - type: string
+            maxLength: 25
+          - type: 'null'
+          title: Phone
+        avatar_url:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Avatar Url
+        password:
+          type: string
+          maxLength: 128
+          minLength: 8
+          title: Password
+      type: object
+      required:
+      - first_name
+      - email
+      - password
+      title: UserCreate
+    UserPasswordChange:
+      properties:
+        current_password:
+          type: string
+          title: Current Password
+        new_password:
+          type: string
+          maxLength: 128
+          minLength: 8
+          title: New Password
+      type: object
+      required:
+      - current_password
+      - new_password
+      title: UserPasswordChange
+    UserProfileUpdate:
+      properties:
+        first_name:
+          anyOf:
+          - type: string
+            maxLength: 80
+            minLength: 2
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+            maxLength: 120
+          - type: 'null'
+          title: Last Name
+        email:
+          anyOf:
+          - type: string
+            maxLength: 190
+            minLength: 5
+          - type: 'null'
+          title: Email
+        phone:
+          anyOf:
+          - type: string
+            maxLength: 25
+          - type: 'null'
+          title: Phone
+        avatar_url:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Avatar Url
+      type: object
+      title: UserProfileUpdate
+    UserResponse:
+      properties:
+        first_name:
+          type: string
+          maxLength: 80
+          minLength: 2
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+            maxLength: 120
+          - type: 'null'
+          title: Last Name
+        email:
+          type: string
+          maxLength: 190
+          minLength: 5
+          title: Email
+        phone:
+          anyOf:
+          - type: string
+            maxLength: 25
+          - type: 'null'
+          title: Phone
+        avatar_url:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Avatar Url
+        id:
+          type: integer
+          title: Id
+        role:
+          "$ref": "#/components/schemas/UserRole"
+        status:
+          "$ref": "#/components/schemas/UserStatus"
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+      type: object
+      required:
+      - first_name
+      - email
+      - id
+      - role
+      - status
+      title: UserResponse
+    UserRole:
+      type: string
+      enum:
+      - CUSTOMER
+      - ADMIN
+      title: UserRole
+    UserStatus:
+      type: string
+      enum:
+      - ACTIVE
+      - INACTIVE
+      - BLOCKED
+      title: UserStatus
+    UserUpdate:
+      properties:
+        first_name:
+          anyOf:
+          - type: string
+            maxLength: 80
+            minLength: 2
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+            maxLength: 120
+          - type: 'null'
+          title: Last Name
+        email:
+          anyOf:
+          - type: string
+            maxLength: 190
+            minLength: 5
+          - type: 'null'
+          title: Email
+        password:
+          anyOf:
+          - type: string
+            maxLength: 128
+            minLength: 8
+          - type: 'null'
+          title: Password
+        phone:
+          anyOf:
+          - type: string
+            maxLength: 25
+          - type: 'null'
+          title: Phone
+        avatar_url:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Avatar Url
+        role:
+          anyOf:
+          - "$ref": "#/components/schemas/UserRole"
+          - type: 'null'
+        status:
+          anyOf:
+          - "$ref": "#/components/schemas/UserStatus"
+          - type: 'null'
+      type: object
+      title: UserUpdate
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: "/api/v1/auth/login"
