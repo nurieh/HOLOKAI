@@ -5,7 +5,9 @@ from app.routers import (
     product_images,
     users,
     auth,
-    orders
+    orders,
+    payments,
+    addresses
 )
 
 app = FastAPI(
@@ -20,6 +22,8 @@ app.include_router(product_images.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(orders.router, prefix="/api/v1")
+app.include_router(payments.router, prefix="/api/v1")
+app.include_router(addresses.router, prefix="/api/v1")
 
 
 @app.get("/")
